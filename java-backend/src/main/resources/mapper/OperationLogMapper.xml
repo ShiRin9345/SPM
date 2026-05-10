@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.team.lms.mapper.OperationLogMapper">
+
+    <resultMap id="OperationLogResultMap" type="com.team.lms.entity.OperationLog">
+        <id property="id" column="id"/>
+        <result property="moduleName" column="module_name"/>
+        <result property="actionName" column="action_name"/>
+        <result property="operatorName" column="operator_name"/>
+        <result property="resultMessage" column="result_message"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <result property="deleted" column="deleted"/>
+    </resultMap>
+
+    <select id="selectAll" resultMap="OperationLogResultMap">
+        select * from operation_logs
+        where deleted = false
+        order by created_at desc, id desc
+    </select>
+
+    <insert id="insert" parameterType="com.team.lms.entity.OperationLog" useGeneratedKeys="true" keyProperty="id">
+        insert into operation_logs(module_name, action_name, operator_name, result_message, created_at, updated_at, deleted)
+        values(#{moduleName}, #{actionName}, #{operatorName}, #{resultMessage}, now(), now(), false)
+    </insert>
+</mapper>

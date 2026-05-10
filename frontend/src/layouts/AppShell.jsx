@@ -7,12 +7,14 @@ export function AppShell({ role, username, menus, activeKey, onNavigate, onLogou
     <div className="shell">
       <aside className="sidebar">
         <div className="brand">
-          <span className="eyebrow">Team Workspace</span>
-          <h2>Library Frontend</h2>
+          <span className="eyebrow">Library System</span>
+          <h2>Workspace</h2>
           <p>{roleDescriptions[role]}</p>
         </div>
         <SidebarNav menus={menus} activeKey={activeKey} onNavigate={onNavigate} />
-        <button className="ghost-button" onClick={onLogout}>Switch User</button>
+        <button className="ghost-button" onClick={onLogout}>
+          Switch User
+        </button>
       </aside>
 
       <main className="content">

@@ -1,22 +1,22 @@
 export const roleMenus = {
   READER: [
-    { key: "reader-books", title: "Book Discovery", hint: "列表、搜索、详情、借阅入口" },
-    { key: "reader-records", title: "Borrow Records", hint: "借阅与归还记录" },
-    { key: "reader-reservations", title: "Reservations", hint: "预约与状态跟踪" },
+    { key: "reader-books", title: "Books", hint: "Search and browse" },
+    { key: "reader-records", title: "Borrow Records", hint: "Current and history" },
+    { key: "reader-reservations", title: "Reservations", hint: "Reservation status" },
   ],
   LIBRARIAN: [
-    { key: "librarian-catalog", title: "Catalog Workspace", hint: "图书、分类、库存、上架" },
-    { key: "librarian-requests", title: "Request Processing", hint: "借阅与归还审批" },
-    { key: "librarian-operations", title: "Reservations & Fines", hint: "预约、罚款、统计" },
+    { key: "librarian-catalog", title: "Catalog", hint: "Books and categories" },
+    { key: "librarian-requests", title: "Borrow Requests", hint: "Approve or reject" },
+    { key: "librarian-operations", title: "Operations", hint: "Returns, reservations, fines" },
   ],
   ADMIN: [
-    { key: "admin-users", title: "Governance", hint: "用户、权限、日志" },
-    { key: "admin-monitoring", title: "Monitoring", hint: "报表、备份、恢复、系统状态" },
+    { key: "admin-users", title: "User Management", hint: "Accounts and permissions" },
+    { key: "admin-monitoring", title: "Monitoring", hint: "Reports and system status" },
   ],
 };
 
 export const roleDescriptions = {
-  READER: "Focus on user-facing journeys and interaction polish.",
-  LIBRARIAN: "Focus on catalog correctness and transaction processing.",
-  ADMIN: "Focus on governance, monitoring, and operational safety.",
+  READER: "Reader workspace",
+  LIBRARIAN: "Librarian workspace",
+  ADMIN: "Administrator workspace",
 };

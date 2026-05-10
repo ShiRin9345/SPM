@@ -11,5 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ReaderAuthVo {
     private String username;
+    private String role;
     private String token;
 }

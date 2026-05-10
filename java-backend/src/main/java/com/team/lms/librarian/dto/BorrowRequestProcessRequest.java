@@ -8,6 +8,7 @@ public class BorrowRequestProcessRequest {
     private String action;
     private String processNote;
     private String rejectReason;
+    private String copyBarcode;
 
     public boolean isApprove() {
         if (approve != null) {

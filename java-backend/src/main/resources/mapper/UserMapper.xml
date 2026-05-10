@@ -50,4 +50,11 @@
         updated_at = now()
         where id = #{id}
     </update>
+
+    <update id="updateEnabledById">
+        update users
+        set enabled = #{enabled},
+            updated_at = now()
+        where id = #{id}
+    </update>
 </mapper>

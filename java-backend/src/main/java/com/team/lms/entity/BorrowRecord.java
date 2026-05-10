@@ -13,6 +13,7 @@ public class BorrowRecord extends BaseEntity {
     private User reader;
     private Book book;
     private BorrowRequest borrowRequest;
+    private BookCopy bookCopy;
     private BorrowRecordStatus status;
     private LocalDate borrowDate;
     private LocalDate dueDate;

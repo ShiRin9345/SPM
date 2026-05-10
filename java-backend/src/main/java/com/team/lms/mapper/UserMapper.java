@@ -2,6 +2,7 @@ package com.team.lms.mapper;
 
 import com.team.lms.entity.User;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -13,4 +14,5 @@ public interface UserMapper {
     List<User> selectAllActive();
     int insert(User user);
     int update(User user);
+    int updateEnabledById(@Param("id") Long id, @Param("enabled") Boolean enabled);
 }

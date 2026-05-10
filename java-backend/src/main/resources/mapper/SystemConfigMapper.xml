@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.team.lms.mapper.SystemConfigMapper">
+
+    <resultMap id="SystemConfigResultMap" type="com.team.lms.entity.SystemConfig">
+        <id property="id" column="id"/>
+        <result property="configKey" column="config_key"/>
+        <result property="configValue" column="config_value"/>
+        <result property="description" column="description"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <result property="deleted" column="deleted"/>
+    </resultMap>
+
+    <select id="selectAll" resultMap="SystemConfigResultMap">
+        select * from system_configs
+        where deleted = false
+        order by id asc
+    </select>
+
+    <select id="selectByKey" resultMap="SystemConfigResultMap">
+        select * from system_configs
+        where config_key = #{configKey} and deleted = false
+    </select>
+
+    <insert id="insert" parameterType="com.team.lms.entity.SystemConfig" useGeneratedKeys="true" keyProperty="id">
+        insert into system_configs(config_key, config_value, description, created_at, updated_at, deleted)
+        values(#{configKey}, #{configValue}, #{description}, now(), now(), false)
+    </insert>
+
+    <update id="update" parameterType="com.team.lms.entity.SystemConfig">
+        update system_configs
+        set config_value = #{configValue},
+            description = #{description},
+            updated_at = now()
+        where id = #{id}
+    </update>
+</mapper>

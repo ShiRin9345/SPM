@@ -10,6 +10,8 @@ import java.math.BigDecimal;
 public class FineManageVo {
     private Long fineId;
     private Long recordId;
+    private String bookTitle;
+    private String copyBarcode;
     private Long readerId;
     private String readerUsername;
     private BigDecimal amount;

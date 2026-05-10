@@ -10,6 +10,7 @@ public interface FineMapper {
     Fine selectById(Long id);
     List<Fine> selectAll();
     List<Fine> selectUnpaid();
+    Fine selectByBorrowRecordId(Long borrowRecordId);
     int insert(Fine fine);
     int update(Fine fine);
 }

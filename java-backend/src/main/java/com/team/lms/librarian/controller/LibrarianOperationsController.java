@@ -5,8 +5,10 @@ import com.team.lms.common.api.BaseController;
 import com.team.lms.librarian.dto.FineStatusUpdateRequest;
 import com.team.lms.librarian.dto.ReservationProcessRequest;
 import com.team.lms.librarian.dto.ReturnProcessRequest;
+import com.team.lms.librarian.vo.BorrowingRecordManageVo;
 import com.team.lms.librarian.service.LibrarianOperationsService;
 import com.team.lms.librarian.vo.FineManageVo;
+import com.team.lms.librarian.vo.LibrarianStatsDetailVo;
 import com.team.lms.librarian.vo.LibrarianStatsVo;
 import com.team.lms.librarian.vo.ReservationManageVo;
 import com.team.lms.librarian.vo.ReturnManageVo;
@@ -23,9 +25,25 @@ public class LibrarianOperationsController extends BaseController {
 
     private final LibrarianOperationsService librarianOperationsService;
 
+    @GetMapping("/borrow-records/current")
+    public ApiResponse<List<BorrowingRecordManageVo>> listCurrentBorrowings(
+            @RequestHeader("Authorization") String authorizationHeader
+    ) {
+        return success(librarianOperationsService.listCurrentBorrowings(authorizationHeader));
+    }
+
+    @GetMapping("/borrow-records/overdue")
+    public ApiResponse<List<BorrowingRecordManageVo>> listOverdueBorrowings(
+            @RequestHeader("Authorization") String authorizationHeader
+    ) {
+        return success(librarianOperationsService.listOverdueBorrowings(authorizationHeader));
+    }
+
     @GetMapping("/return-requests")
-    public ApiResponse<List<ReturnManageVo>> listPendingReturns() {
-        return success(librarianOperationsService.listPendingReturns());
+    public ApiResponse<List<ReturnManageVo>> listPendingReturns(
+            @RequestHeader("Authorization") String authorizationHeader
+    ) {
+        return success(librarianOperationsService.listPendingReturns(authorizationHeader));
     }
 
     @PostMapping("/return-requests/{recordId}/process")
@@ -38,8 +56,10 @@ public class LibrarianOperationsController extends BaseController {
     }
 
     @GetMapping("/reservations")
-    public ApiResponse<List<ReservationManageVo>> listReservations() {
-        return success(librarianOperationsService.listReservations());
+    public ApiResponse<List<ReservationManageVo>> listReservations(
+            @RequestHeader("Authorization") String authorizationHeader
+    ) {
+        return success(librarianOperationsService.listReservations(authorizationHeader));
     }
 
     @PostMapping("/reservations/{reservationId}/process")
@@ -52,8 +72,10 @@ public class LibrarianOperationsController extends BaseController {
     }
 
     @GetMapping("/fines")
-    public ApiResponse<List<FineManageVo>> listFines() {
-        return success(librarianOperationsService.listFines());
+    public ApiResponse<List<FineManageVo>> listFines(
+            @RequestHeader("Authorization") String authorizationHeader
+    ) {
+        return success(librarianOperationsService.listFines(authorizationHeader));
     }
 
     @PatchMapping("/fines/{fineId}/status")
@@ -66,12 +88,15 @@ public class LibrarianOperationsController extends BaseController {
     }
 
     @GetMapping("/statistics")
-    public ApiResponse<LibrarianStatsVo> getStatistics() {
-        return success(librarianOperationsService.getStatistics());
+    public ApiResponse<LibrarianStatsVo> getStatistics(
+            @RequestHeader("Authorization") String authorizationHeader
+    ) {
+        return success(librarianOperationsService.getStatistics(authorizationHeader));
     }
     @GetMapping("/statistics/detailed")
     public ApiResponse<LibrarianStatsDetailVo> getDetailedStatistics(
+            @RequestHeader("Authorization") String authorizationHeader,
             @RequestParam(value = "periodType", defaultValue = "month") String periodType) {
-        return success(librarianOperationsService.getDetailedStatistics(periodType));
+        return success(librarianOperationsService.getDetailedStatistics(authorizationHeader, periodType));
     }
 }

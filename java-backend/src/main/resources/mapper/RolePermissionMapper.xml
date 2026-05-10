@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.team.lms.mapper.RolePermissionMapper">
+
+    <resultMap id="RolePermissionResultMap" type="com.team.lms.entity.RolePermission">
+        <id property="id" column="id"/>
+        <result property="role" column="role"/>
+        <result property="permissionScope" column="permission_scope"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <result property="deleted" column="deleted"/>
+    </resultMap>
+
+    <select id="selectAll" resultMap="RolePermissionResultMap">
+        select * from role_permissions
+        where deleted = false
+        order by id asc
+    </select>
+
+    <select id="selectByRole" resultMap="RolePermissionResultMap">
+        select * from role_permissions
+        where role = #{role} and deleted = false
+    </select>
+
+    <insert id="insert" parameterType="com.team.lms.entity.RolePermission" useGeneratedKeys="true" keyProperty="id">
+        insert into role_permissions(role, permission_scope, created_at, updated_at, deleted)
+        values(#{role}, #{permissionScope}, now(), now(), false)
+    </insert>
+
+    <update id="update" parameterType="com.team.lms.entity.RolePermission">
+        update role_permissions
+        set permission_scope = #{permissionScope},
+            updated_at = now()
+        where id = #{id}
+    </update>
+</mapper>

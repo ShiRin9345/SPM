@@ -1,11 +1,14 @@
 package com.team.lms.librarian.service.impl;
 
+import com.team.lms.common.enums.RoleType;
+import com.team.lms.common.support.PermissionScopeSupport;
 import com.team.lms.entity.Category;
 import com.team.lms.exception.BusinessException;
 import com.team.lms.librarian.dto.CategoryCreateRequest;
 import com.team.lms.librarian.dto.CategoryUpdateRequest;
 import com.team.lms.librarian.service.LibrarianCategoryService;
 import com.team.lms.librarian.vo.CategoryManageVo;
+import com.team.lms.mapper.BookMapper;
 import com.team.lms.mapper.CategoryMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,15 +22,18 @@ public class LibrarianCategoryServiceImpl implements LibrarianCategoryService {
 
     private final CategoryMapper categoryMapper;
     private final BookMapper bookMapper;
+    private final PermissionScopeSupport permissionScopeSupport;
 
     @Override
-    public List<CategoryManageVo> listCategories() {
+    public List<CategoryManageVo> listCategories(String authorizationHeader) {
+        permissionScopeSupport.requirePermission(authorizationHeader, RoleType.LIBRARIAN, "BOOK_MANAGE");
         return categoryMapper.selectAll().stream().map(this::toManageVo).toList();
     }
 
     @Override
     @Transactional
-    public CategoryManageVo createCategory(CategoryCreateRequest request) {
+    public CategoryManageVo createCategory(String authorizationHeader, CategoryCreateRequest request) {
+        permissionScopeSupport.requirePermission(authorizationHeader, RoleType.LIBRARIAN, "BOOK_MANAGE");
         String normalizedCode = request.getCode().trim().toUpperCase();
         if (categoryMapper.selectByCode(normalizedCode) != null) {
             throw new BusinessException(400, "category code already exists");
@@ -44,7 +50,8 @@ public class LibrarianCategoryServiceImpl implements LibrarianCategoryService {
 
     @Override
     @Transactional
-    public CategoryManageVo updateCategory(Long categoryId, CategoryUpdateRequest request) {
+    public CategoryManageVo updateCategory(String authorizationHeader, Long categoryId, CategoryUpdateRequest request) {
+        permissionScopeSupport.requirePermission(authorizationHeader, RoleType.LIBRARIAN, "BOOK_MANAGE");
         Category category = categoryMapper.selectById(categoryId);
         if (category == null) {
             throw new BusinessException(404, "category not found");
@@ -67,7 +74,8 @@ public class LibrarianCategoryServiceImpl implements LibrarianCategoryService {
     }
     @Override
     @Transactional
-    public void deleteCategory(Long categoryId, boolean force) {
+    public void deleteCategory(String authorizationHeader, Long categoryId, boolean force) {
+        permissionScopeSupport.requirePermission(authorizationHeader, RoleType.LIBRARIAN, "BOOK_MANAGE");
         Category category = categoryMapper.selectById(categoryId);
         if (category == null) {
             throw new BusinessException(404, "category not found");

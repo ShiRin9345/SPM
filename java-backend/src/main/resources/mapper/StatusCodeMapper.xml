@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.team.lms.mapper.StatusCodeMapper">
+
+    <resultMap id="StatusCodeResultMap" type="com.team.lms.entity.StatusCode">
+        <id property="id" column="id"/>
+        <result property="codeType" column="code_type"/>
+        <result property="codeValue" column="code_value"/>
+        <result property="displayName" column="display_name"/>
+        <result property="description" column="description"/>
+        <result property="enabled" column="enabled"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <result property="deleted" column="deleted"/>
+    </resultMap>
+
+    <select id="selectAll" resultMap="StatusCodeResultMap">
+        select * from status_codes
+        where deleted = false
+        order by code_type asc, code_value asc
+    </select>
+
+    <select id="selectByType" resultMap="StatusCodeResultMap">
+        select * from status_codes
+        where deleted = false and code_type = #{codeType}
+        order by code_value asc
+    </select>
+
+    <select id="selectById" resultMap="StatusCodeResultMap">
+        select * from status_codes
+        where id = #{id} and deleted = false
+    </select>
+
+    <select id="selectByTypeAndValue" resultMap="StatusCodeResultMap">
+        select * from status_codes
+        where code_type = #{codeType} and code_value = #{codeValue} and deleted = false
+    </select>
+
+    <insert id="insert" parameterType="com.team.lms.entity.StatusCode" useGeneratedKeys="true" keyProperty="id">
+        insert into status_codes(code_type, code_value, display_name, description, enabled, created_at, updated_at, deleted)
+        values(#{codeType}, #{codeValue}, #{displayName}, #{description}, #{enabled}, now(), now(), false)
+    </insert>
+
+    <update id="update" parameterType="com.team.lms.entity.StatusCode">
+        update status_codes
+        set display_name = #{displayName},
+            description = #{description},
+            enabled = #{enabled},
+            updated_at = now()
+        where id = #{id}
+    </update>
+</mapper>

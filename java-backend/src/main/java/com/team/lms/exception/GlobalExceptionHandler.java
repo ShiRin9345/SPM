@@ -33,6 +33,18 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ApiResponse<Void> handleSystemException(Exception exception) {
-        return ApiResponse.failure(500, exception.getMessage());
+        exception.printStackTrace();
+        Throwable root = exception;
+        while (root.getCause() != null) {
+            root = root.getCause();
+        }
+        String message = exception.getMessage();
+        if (message == null || message.isBlank()) {
+            message = root.getMessage();
+        }
+        if (message == null || message.isBlank()) {
+            message = exception.getClass().getSimpleName();
+        }
+        return ApiResponse.failure(500, message);
     }
 }

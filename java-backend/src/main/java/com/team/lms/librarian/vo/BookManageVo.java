@@ -10,6 +10,7 @@ public class BookManageVo {
     private String title;
     private String author;
     private String isbn;
+    private String barcode;
     private Long categoryId;
     private String categoryName;
     private String publisher;

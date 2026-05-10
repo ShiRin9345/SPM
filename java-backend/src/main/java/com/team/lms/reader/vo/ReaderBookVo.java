@@ -12,4 +12,6 @@ public class ReaderBookVo {
     private String categoryName;
     private Integer availableCopies;
     private String shelfStatus;
+    private Boolean favorite;
+    private Double averageRating;
 }

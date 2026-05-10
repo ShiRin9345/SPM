@@ -1,8 +1,17 @@
 ﻿import { request } from "./base";
 
 export const librarianApi = {
+  lookupBookByIsbn(token, isbn) {
+    return request(`/librarian/books/isbn-lookup?isbn=${encodeURIComponent(isbn)}`, {}, token);
+  },
   listBooks(token) {
     return request("/librarian/books", {}, token);
+  },
+  getBookBarcode(token, bookId) {
+    return request(`/librarian/books/${bookId}/barcode`, {}, token);
+  },
+  listBookCopies(token, bookId) {
+    return request(`/librarian/books/${bookId}/copies`, {}, token);
   },
   createBook(token, payload) {
     return request("/librarian/books", { method: "POST", body: JSON.stringify(payload) }, token);
@@ -28,6 +37,12 @@ export const librarianApi = {
   updateCategory(token, categoryId, payload) {
     return request(`/librarian/categories/${categoryId}`, { method: "PUT", body: JSON.stringify(payload) }, token);
   },
+  deleteCategory(token, categoryId, payload) {
+    return request(`/librarian/categories/${categoryId}`, {
+      method: "DELETE",
+      body: payload ? JSON.stringify(payload) : undefined,
+    }, token);
+  },
   listBorrowRequests(token, statusFilter = "PENDING") {
     const query = statusFilter ? `?status_filter=${encodeURIComponent(statusFilter)}` : "";
     return request(`/librarian/borrow-requests${query}`, {}, token);
@@ -37,6 +52,12 @@ export const librarianApi = {
   },
   listReturnRequests(token) {
     return request("/librarian/return-requests", {}, token);
+  },
+  listCurrentBorrowings(token) {
+    return request("/librarian/borrow-records/current", {}, token);
+  },
+  listOverdueBorrowings(token) {
+    return request("/librarian/borrow-records/overdue", {}, token);
   },
   processReturnRequest(token, recordId, payload) {
     return request(`/librarian/return-requests/${recordId}/process`, { method: "POST", body: JSON.stringify(payload) }, token);
@@ -55,5 +76,8 @@ export const librarianApi = {
   },
   getStatistics(token) {
     return request("/librarian/statistics", {}, token);
+  },
+  getDetailedStatistics(token, periodType = "month") {
+    return request(`/librarian/statistics/detailed?periodType=${encodeURIComponent(periodType)}`, {}, token);
   },
 };

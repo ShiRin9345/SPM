@@ -9,6 +9,7 @@
         <result property="title" column="title"/>
         <result property="author" column="author"/>
         <result property="isbn" column="isbn"/>
+        <result property="barcode" column="barcode"/>
         <result property="publisher" column="publisher"/>
         <result property="description" column="description"/>
         <result property="shelfStatus" column="shelf_status"/>
@@ -22,7 +23,7 @@
     </resultMap>
 
     <sql id="BaseBookColumns">
-        b.id, b.title, b.author, b.isbn, b.publisher, b.description, b.category_id, b.shelf_status,
+        b.id, b.title, b.author, b.isbn, b.barcode, b.publisher, b.description, b.category_id, b.shelf_status,
         b.created_at, b.updated_at, b.deleted, c.name as category_name
     </sql>
 
@@ -71,9 +72,16 @@
         where b.isbn = #{isbn} and b.deleted = false
     </select>
 
+    <select id="selectByBarcode" resultMap="BookResultMap">
+        select <include refid="BaseBookColumns"/>
+        from books b
+        left join categories c on b.category_id = c.id
+        where b.barcode = #{barcode} and b.deleted = false
+    </select>
+
     <insert id="insert" parameterType="com.team.lms.entity.Book" useGeneratedKeys="true" keyProperty="id">
-        insert into books(title, author, isbn, publisher, description, category_id, shelf_status, created_at, updated_at, deleted)
-        values(#{title}, #{author}, #{isbn}, #{publisher}, #{description}, #{category.id}, #{shelfStatus}, now(), now(), false)
+        insert into books(title, author, isbn, barcode, publisher, description, category_id, shelf_status, created_at, updated_at, deleted)
+        values(#{title}, #{author}, #{isbn}, #{barcode}, #{publisher}, #{description}, #{category.id}, #{shelfStatus}, now(), now(), false)
     </insert>
 
     <update id="update" parameterType="com.team.lms.entity.Book">
@@ -81,6 +89,7 @@
         set title = #{title},
             author = #{author},
             isbn = #{isbn},
+            barcode = #{barcode},
             publisher = #{publisher},
             description = #{description},
             category_id = #{category.id},
@@ -96,10 +105,10 @@
         where id = #{id}
     </update>
     <select id="countByCategoryId" resultType="long">
-        SELECT COUNT(*) FROM book WHERE category_id = #{categoryId} AND deleted = 0
+        SELECT COUNT(*) FROM books WHERE category_id = #{categoryId} AND deleted = 0
     </select>
 
     <update id="clearCategoryByCategoryId">
-        UPDATE book SET category_id = NULL WHERE category_id = #{categoryId}
+        UPDATE books SET category_id = NULL WHERE category_id = #{categoryId}
     </update>
 </mapper>

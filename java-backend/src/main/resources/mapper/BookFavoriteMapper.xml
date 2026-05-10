@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.team.lms.mapper.BookFavoriteMapper">
+
+    <resultMap id="BookFavoriteResultMap" type="com.team.lms.entity.BookFavorite">
+        <id property="id" column="id"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <result property="deleted" column="deleted"/>
+        <association property="reader" javaType="com.team.lms.entity.User">
+            <id property="id" column="reader_id"/>
+            <result property="username" column="reader_username"/>
+        </association>
+        <association property="book" javaType="com.team.lms.entity.Book">
+            <id property="id" column="book_id"/>
+            <result property="title" column="book_title"/>
+        </association>
+    </resultMap>
+
+    <sql id="FavoriteColumns">
+        f.id, f.reader_id, f.book_id, f.created_at, f.updated_at, f.deleted,
+        u.username as reader_username,
+        b.title as book_title
+    </sql>
+
+    <select id="selectByReaderId" resultMap="BookFavoriteResultMap">
+        select <include refid="FavoriteColumns"/>
+        from book_favorites f
+        join users u on f.reader_id = u.id
+        join books b on f.book_id = b.id
+        where f.reader_id = #{readerId} and f.deleted = false
+        order by f.created_at desc, f.id desc
+    </select>
+
+    <select id="selectByReaderAndBookId" resultMap="BookFavoriteResultMap">
+        select <include refid="FavoriteColumns"/>
+        from book_favorites f
+        join users u on f.reader_id = u.id
+        join books b on f.book_id = b.id
+        where f.reader_id = #{readerId} and f.book_id = #{bookId} and f.deleted = false
+        limit 1
+    </select>
+
+    <insert id="insert" parameterType="com.team.lms.entity.BookFavorite" useGeneratedKeys="true" keyProperty="id">
+        insert into book_favorites(reader_id, book_id, created_at, updated_at, deleted)
+        values(#{reader.id}, #{book.id}, now(), now(), false)
+    </insert>
+
+    <delete id="deleteById">
+        delete from book_favorites where id = #{id}
+    </delete>
+</mapper>

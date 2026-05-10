@@ -7,8 +7,8 @@ import com.team.lms.librarian.vo.CategoryManageVo;
 import java.util.List;
 
 public interface LibrarianCategoryService {
-    List<CategoryManageVo> listCategories();
-    CategoryManageVo createCategory(CategoryCreateRequest request);
-    CategoryManageVo updateCategory(Long categoryId, CategoryUpdateRequest request);
-    void deleteCategory(Long categoryId, boolean force);
+    List<CategoryManageVo> listCategories(String authorizationHeader);
+    CategoryManageVo createCategory(String authorizationHeader, CategoryCreateRequest request);
+    CategoryManageVo updateCategory(String authorizationHeader, Long categoryId, CategoryUpdateRequest request);
+    void deleteCategory(String authorizationHeader, Long categoryId, boolean force);
 }

@@ -20,9 +20,10 @@ public class LibrarianBorrowRequestController extends BaseController {
 
     @GetMapping
     public ApiResponse<List<BorrowRequestManageVo>> listPendingRequests(
+            @RequestHeader("Authorization") String authorizationHeader,
             @RequestParam(value = "status_filter", required = false) String statusFilter
     ) {
-        return success(librarianBorrowRequestService.listRequests(statusFilter));
+        return success(librarianBorrowRequestService.listRequests(authorizationHeader, statusFilter));
     }
 
     @PostMapping("/{requestId}/process")

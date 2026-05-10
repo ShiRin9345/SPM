@@ -41,7 +41,38 @@
         join users u on r.reader_id = u.id
         join books b on r.book_id = b.id
         where r.deleted = false
-        order by r.id asc
+        order by r.id desc
+    </select>
+
+    <select id="selectByReaderId" resultMap="ReservationResultMap">
+        select <include refid="ReservationColumns"/>
+        from reservations r
+        join users u on r.reader_id = u.id
+        join books b on r.book_id = b.id
+        where r.reader_id = #{readerId} and r.deleted = false
+        order by r.id desc
+    </select>
+
+    <select id="selectPendingByBookId" resultMap="ReservationResultMap">
+        select <include refid="ReservationColumns"/>
+        from reservations r
+        join users u on r.reader_id = u.id
+        join books b on r.book_id = b.id
+        where r.book_id = #{bookId} and r.deleted = false and r.status = 'PENDING'
+        order by r.queue_no asc, r.id asc
+    </select>
+
+    <select id="selectPendingByReaderAndBookId" resultMap="ReservationResultMap">
+        select <include refid="ReservationColumns"/>
+        from reservations r
+        join users u on r.reader_id = u.id
+        join books b on r.book_id = b.id
+        where r.reader_id = #{readerId}
+          and r.book_id = #{bookId}
+          and r.deleted = false
+          and r.status = 'PENDING'
+        order by r.id desc
+        limit 1
     </select>
 
     <select id="selectPending" resultMap="ReservationResultMap">
