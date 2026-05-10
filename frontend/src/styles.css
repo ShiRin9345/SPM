@@ -485,6 +485,33 @@ th {
   align-items: center;
 }
 
+.review-card.mine {
+  border-color: var(--primary);
+  background: #f0f7ff;
+}
+
+.review-head .badge {
+  display: inline-block;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: var(--primary);
+  color: #fff;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+.review-head .stars {
+  color: #f59e0b;
+  font-size: 16px;
+  letter-spacing: 2px;
+  white-space: nowrap;
+}
+
+.review-card small {
+  color: var(--secondary);
+}
+
 .detail-link-button {
   text-decoration: none;
   display: inline-flex;

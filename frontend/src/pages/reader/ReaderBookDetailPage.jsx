@@ -184,13 +184,16 @@ export function ReaderBookDetailPage({ workspace }) {
           <div className="review-list">
             {detail.reviews?.length ? (
               detail.reviews.map((review) => (
-                <article key={review.reviewId} className="review-card">
+                <article key={review.reviewId} className={`review-card${review.mine ? " mine" : ""}`}>
                   <div className="review-head">
-                    <strong>{review.readerUsername}</strong>
-                    <span>{renderStars(review.ratingScore)}</span>
+                    <div>
+                      <strong>{review.readerUsername}</strong>
+                      {review.mine ? <span className="badge">Your Review</span> : null}
+                    </div>
+                    <span className="stars">{renderStars(review.ratingScore)}</span>
                   </div>
                   <p>{review.reviewContent}</p>
-                  <small>{review.createdAt || "-"}</small>
+                  <small>{formatDate(review.createdAt)}</small>
                 </article>
               ))
             ) : (
@@ -233,5 +236,16 @@ export function ReaderBookDetailPage({ workspace }) {
 
 function renderStars(score) {
   const count = Math.max(0, Math.min(5, Number(score || 0)));
-  return `${"*".repeat(count)}${"-".repeat(Math.max(0, 5 - count))}`;
+  return `${"★".repeat(count)}${"☆".repeat(Math.max(0, 5 - count))}`;
+}
+
+function formatDate(dateStr) {
+  if (!dateStr) return "-";
+  const date = new Date(dateStr);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  return `${year}-${month}-${day} ${hours}:${minutes}`;
 }
