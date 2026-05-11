@@ -20,4 +20,6 @@ public class BookUpdateRequest {
 
     private String publisher;
     private String description;
+    private String thumbnailUrl;
+    private String publishedDate;
 }

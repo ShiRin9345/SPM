@@ -138,13 +138,21 @@ export function ReaderBookDetailPage({ workspace }) {
 
         <div className="detail-grid">
           <div className="detail-hero">
-            <div className="detail-meta">
-              <strong>{detail.author}</strong>
-              <span>{detail.categoryName || "Uncategorized"}</span>
-              <span>ISBN: {detail.isbn || "-"}</span>
-              <span>Publisher: {detail.publisher || "-"}</span>
+            {detail.thumbnailUrl ? (
+              <img src={detail.thumbnailUrl} alt={detail.title} className="cover-detail" />
+            ) : (
+              <div className="cover-placeholder-detail">No Cover</div>
+            )}
+            <div>
+              <div className="detail-meta">
+                <strong>{detail.author}</strong>
+                <span>{detail.categoryName || "Uncategorized"}</span>
+                <span>ISBN: {detail.isbn || "-"}</span>
+                <span>Publisher: {detail.publisher || "-"}</span>
+                {detail.publishedDate ? <span>Published: {detail.publishedDate}</span> : null}
+              </div>
+              <p className="page-note">{detail.description || "No description available."}</p>
             </div>
-            <p className="page-note">{detail.description || "No description available."}</p>
           </div>
 
           <div className="detail-side">

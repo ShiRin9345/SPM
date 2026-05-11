@@ -53,6 +53,9 @@ export const librarianApi = {
   listReturnRequests(token) {
     return request("/librarian/return-requests", {}, token);
   },
+  lookupByBarcode(token, barcode) {
+    return request(`/librarian/borrow-records/by-barcode?barcode=${encodeURIComponent(barcode)}`, {}, token);
+  },
   listCurrentBorrowings(token) {
     return request("/librarian/borrow-records/current", {}, token);
   },

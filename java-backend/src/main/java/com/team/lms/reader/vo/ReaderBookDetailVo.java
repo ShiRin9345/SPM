@@ -13,6 +13,8 @@ public class ReaderBookDetailVo {
     private String author;
     private String isbn;
     private String publisher;
+    private String thumbnailUrl;
+    private String publishedDate;
     private String description;
     private String categoryName;
     private Integer totalCopies;

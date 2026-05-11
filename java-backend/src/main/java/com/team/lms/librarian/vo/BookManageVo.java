@@ -15,6 +15,8 @@ public class BookManageVo {
     private String categoryName;
     private String publisher;
     private String description;
+    private String thumbnailUrl;
+    private String publishedDate;
     private Integer totalCopies;
     private Integer availableCopies;
     private String shelfStatus;

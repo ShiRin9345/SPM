@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { librarianApi } from "../../api/client";
 import { StatCard } from "../../components/StatCard";
+import Barcode from "../../components/Barcode";
 
 const EMPTY_BOOK_FORM = {
   title: "",
@@ -10,6 +11,8 @@ const EMPTY_BOOK_FORM = {
   categoryId: "",
   publisher: "",
   description: "",
+  thumbnailUrl: "",
+  publishedDate: "",
   totalCopies: 1,
   availableCopies: 1,
   shelfStatus: "ON_SHELF",
@@ -158,6 +161,8 @@ export function LibrarianCatalogPage({ workspace }) {
         author: result.author || prev.author,
         publisher: result.publisher || prev.publisher,
         description: result.description || prev.description,
+        publishedDate: result.publishedDate || prev.publishedDate,
+        thumbnailUrl: result.thumbnailUrl || prev.thumbnailUrl,
         categoryId: matchedCategory ? String(matchedCategory.categoryId) : prev.categoryId,
       }));
       setMessage("ISBN metadata loaded.");
@@ -373,6 +378,7 @@ export function LibrarianCatalogPage({ workspace }) {
                   </select>
                   <input placeholder="Barcode" value={bookForm.barcode || "Will be generated automatically"} disabled />
                   <input placeholder="Publisher" value={bookForm.publisher} disabled={disableMetadataFields} onChange={(e) => setBookForm((prev) => ({ ...prev, publisher: e.target.value }))} />
+                  <input placeholder="Published Date" value={bookForm.publishedDate} disabled={disableMetadataFields} onChange={(e) => setBookForm((prev) => ({ ...prev, publishedDate: e.target.value }))} />
                   <select value={bookForm.shelfStatus} disabled={!canManageInventory} onChange={(e) => setBookForm((prev) => ({ ...prev, shelfStatus: e.target.value }))}>
                     <option value="ON_SHELF">ON_SHELF</option>
                     <option value="OFF_SHELF">OFF_SHELF</option>
@@ -380,6 +386,12 @@ export function LibrarianCatalogPage({ workspace }) {
                   <input type="number" placeholder="Total Copies" min={0} disabled={!canManageInventory} value={bookForm.totalCopies} onChange={(e) => setBookForm((prev) => ({ ...prev, totalCopies: e.target.value }))} />
                   <input type="number" placeholder="Available Copies" min={0} disabled={!canManageInventory} value={bookForm.availableCopies} onChange={(e) => setBookForm((prev) => ({ ...prev, availableCopies: e.target.value }))} />
                   <textarea className="span-2" placeholder="Description" value={bookForm.description} disabled={disableMetadataFields} onChange={(e) => setBookForm((prev) => ({ ...prev, description: e.target.value }))} />
+                  {bookForm.thumbnailUrl ? (
+                    <div>
+                      <small>Cover Preview</small>
+                      <img src={bookForm.thumbnailUrl} alt="Cover preview" className="cover-thumb-preview" />
+                    </div>
+                  ) : null}
                 </div>
                 <div className="inline-actions">
                   <button className="primary-button" type="button" disabled={saving} onClick={handleSaveBook}>
@@ -453,6 +465,7 @@ export function LibrarianCatalogPage({ workspace }) {
               <table>
                 <thead>
                   <tr>
+                    <th>Cover</th>
                     <th>ID</th>
                     <th>Title</th>
                     <th>Author</th>
@@ -466,6 +479,13 @@ export function LibrarianCatalogPage({ workspace }) {
                 <tbody>
                   {books.map((book) => (
                     <tr key={book.bookId}>
+                      <td>
+                        {book.thumbnailUrl ? (
+                          <img src={book.thumbnailUrl} alt={book.title} className="cover-thumb-table" />
+                        ) : (
+                          <span className="cover-placeholder">-</span>
+                        )}
+                      </td>
                       <td>{book.bookId}</td>
                       <td>{book.title}</td>
                       <td>{book.author}</td>
@@ -483,7 +503,7 @@ export function LibrarianCatalogPage({ workspace }) {
                       </td>
                     </tr>
                   ))}
-                  {!loading && books.length === 0 ? <tr><td colSpan="8">No books.</td></tr> : null}
+                  {!loading && books.length === 0 ? <tr><td colSpan="9">No books.</td></tr> : null}
                 </tbody>
               </table>
             </div>
@@ -512,7 +532,7 @@ export function LibrarianCatalogPage({ workspace }) {
                     {bookCopies.map((copy) => (
                       <tr key={copy.copyId}>
                         <td>{copy.copyNo}</td>
-                        <td>{copy.barcode}</td>
+                        <td><Barcode value={copy.barcode} height={30} fontSize={10} displayValue={true} /></td>
                       </tr>
                     ))}
                     {bookCopies.length === 0 ? (
@@ -540,6 +560,8 @@ function toBookForm(book) {
     categoryId: book.categoryId || "",
     publisher: book.publisher || "",
     description: book.description || "",
+    thumbnailUrl: book.thumbnailUrl || "",
+    publishedDate: book.publishedDate || "",
     totalCopies: book.totalCopies ?? 0,
     availableCopies: book.availableCopies ?? 0,
     shelfStatus: book.shelfStatus || "ON_SHELF",

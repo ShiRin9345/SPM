@@ -56,7 +56,7 @@
 
     <insert id="insert" parameterType="com.team.lms.entity.BookReview" useGeneratedKeys="true" keyProperty="id">
         insert into book_reviews(reader_id, book_id, rating_score, review_content, created_at, updated_at, deleted)
-        values(#{reader.id}, #{book.id}, #{ratingScore}, #{reviewContent}, now(), now(), false)
+        values(#{reader.id}, #{book.id}, #{ratingScore}, #{reviewContent}, #{createdAt}, #{updatedAt}, false)
     </insert>
 
     <update id="update" parameterType="com.team.lms.entity.BookReview">

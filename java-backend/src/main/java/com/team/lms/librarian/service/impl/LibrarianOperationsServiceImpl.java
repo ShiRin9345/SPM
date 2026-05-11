@@ -8,6 +8,7 @@ import com.team.lms.common.support.CurrentUserSupport;
 import com.team.lms.common.support.PermissionScopeSupport;
 import com.team.lms.common.support.SystemConfigSupport;
 import com.team.lms.entity.BorrowRecord;
+import com.team.lms.entity.BookCopy;
 import com.team.lms.entity.Fine;
 import com.team.lms.entity.Inventory;
 import com.team.lms.entity.Reservation;
@@ -22,6 +23,7 @@ import com.team.lms.librarian.vo.LibrarianStatsDetailVo;
 import com.team.lms.librarian.vo.LibrarianStatsVo;
 import com.team.lms.librarian.vo.ReservationManageVo;
 import com.team.lms.librarian.vo.ReturnManageVo;
+import com.team.lms.mapper.BookCopyMapper;
 import com.team.lms.mapper.BookMapper;
 import com.team.lms.mapper.BorrowRecordMapper;
 import com.team.lms.mapper.BorrowRequestMapper;
@@ -48,6 +50,7 @@ public class LibrarianOperationsServiceImpl implements LibrarianOperationsServic
     private final FineMapper fineMapper;
     private final InventoryMapper inventoryMapper;
     private final BookMapper bookMapper;
+    private final BookCopyMapper bookCopyMapper;
     private final CurrentUserSupport currentUserSupport;
     private final PermissionScopeSupport permissionScopeSupport;
     private final SystemConfigSupport systemConfigSupport;
@@ -79,6 +82,24 @@ public class LibrarianOperationsServiceImpl implements LibrarianOperationsServic
         return borrowRecordMapper.selectReturnPendingRecords().stream()
                 .map(record -> toReturnManageVo(record, findFineByRecordId(record.getId()), null))
                 .toList();
+    }
+
+    @Override
+    public ReturnManageVo getActiveBorrowByBarcode(String authorizationHeader, String barcode) {
+        permissionScopeSupport.requirePermission(authorizationHeader, RoleType.LIBRARIAN, "REQUEST_PROCESS");
+        if (barcode == null || barcode.trim().isEmpty()) {
+            throw new BusinessException(400, "barcode is required");
+        }
+        BookCopy copy = bookCopyMapper.selectByBarcode(barcode.trim());
+        if (copy == null) {
+            throw new BusinessException(404, "no book copy found for the given barcode");
+        }
+        BorrowRecord record = borrowRecordMapper.selectActiveByBookCopyBarcode(barcode.trim());
+        if (record == null) {
+            throw new BusinessException(404, "no active borrow record found for this barcode");
+        }
+        Fine fine = findFineByRecordId(record.getId());
+        return toReturnManageVo(record, fine, "active borrow record found");
     }
 
     @Override

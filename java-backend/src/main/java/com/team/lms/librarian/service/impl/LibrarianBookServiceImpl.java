@@ -12,7 +12,9 @@ import com.team.lms.librarian.dto.BookCreateRequest;
 import com.team.lms.librarian.dto.BookUpdateRequest;
 import com.team.lms.librarian.dto.InventoryUpdateRequest;
 import com.team.lms.librarian.dto.ShelfStatusUpdateRequest;
+import com.team.lms.librarian.service.LocalIsbnRepository;
 import com.team.lms.librarian.service.GoogleBooksIsbnClient;
+import com.team.lms.librarian.service.OpenLibraryIsbnClient;
 import com.team.lms.librarian.service.LibrarianBookService;
 import com.team.lms.librarian.vo.BookBarcodeVo;
 import com.team.lms.librarian.vo.BookCopyVo;
@@ -40,6 +42,8 @@ public class LibrarianBookServiceImpl implements LibrarianBookService {
     private final CategoryMapper categoryMapper;
     private final InventoryMapper inventoryMapper;
     private final PermissionScopeSupport permissionScopeSupport;
+    private final LocalIsbnRepository localIsbnRepository;
+    private final OpenLibraryIsbnClient openLibraryIsbnClient;
     private final GoogleBooksIsbnClient googleBooksIsbnClient;
 
     @Override
@@ -48,7 +52,20 @@ public class LibrarianBookServiceImpl implements LibrarianBookService {
         if (isbn == null || isbn.trim().isEmpty()) {
             throw new BusinessException(400, "isbn is required");
         }
-        return googleBooksIsbnClient.lookup(isbn);
+        String normalizedIsbn = isbn.trim();
+        IsbnLookupVo local = localIsbnRepository.find(normalizedIsbn);
+        if (local != null) {
+            return local;
+        }
+        try {
+            return openLibraryIsbnClient.lookup(normalizedIsbn);
+        } catch (Exception openLibraryError) {
+            try {
+                return googleBooksIsbnClient.lookup(normalizedIsbn);
+            } catch (BusinessException googleBooksError) {
+                throw new BusinessException(404, "no book found for isbn: " + normalizedIsbn);
+            }
+        }
     }
 
     @Override
@@ -70,6 +87,8 @@ public class LibrarianBookServiceImpl implements LibrarianBookService {
         book.setBarcode(generateUniqueBarcode());
         book.setPublisher(normalizeOptional(request.getPublisher()));
         book.setDescription(normalizeOptional(request.getDescription()));
+        book.setThumbnailUrl(normalizeOptional(request.getThumbnailUrl()));
+        book.setPublishedDate(normalizeOptional(request.getPublishedDate()));
         book.setCategory(category);
         book.setShelfStatus(parseShelfStatus(request.getShelfStatus()));
         bookMapper.insert(book);
@@ -105,6 +124,8 @@ public class LibrarianBookServiceImpl implements LibrarianBookService {
         }
         existingBook.setPublisher(normalizeOptional(request.getPublisher()));
         existingBook.setDescription(normalizeOptional(request.getDescription()));
+        existingBook.setThumbnailUrl(normalizeOptional(request.getThumbnailUrl()));
+        existingBook.setPublishedDate(normalizeOptional(request.getPublishedDate()));
         existingBook.setCategory(category);
         bookMapper.update(existingBook);
 
@@ -302,6 +323,8 @@ public class LibrarianBookServiceImpl implements LibrarianBookService {
                 .categoryName(book.getCategory() == null ? null : book.getCategory().getName())
                 .publisher(book.getPublisher())
                 .description(book.getDescription())
+                .thumbnailUrl(book.getThumbnailUrl())
+                .publishedDate(book.getPublishedDate())
                 .totalCopies(inventory == null ? 0 : inventory.getTotalCopies())
                 .availableCopies(inventory == null ? 0 : inventory.getAvailableCopies())
                 .shelfStatus(book.getShelfStatus() == null ? null : book.getShelfStatus().name())

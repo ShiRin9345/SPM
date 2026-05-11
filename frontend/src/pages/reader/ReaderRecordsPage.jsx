@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { readerApi } from "../../api/client";
 import { StatCard } from "../../components/StatCard";
+import Barcode from "../../components/Barcode";
 
 export function ReaderRecordsPage({ workspace }) {
   const permissionsLoaded = Array.isArray(workspace?.permissions);
@@ -131,7 +132,7 @@ export function ReaderRecordsPage({ workspace }) {
                     <tr key={record.recordId}>
                       <td>{record.recordId}</td>
                       <td>{record.bookTitle}</td>
-                      <td>{record.copyBarcode || "-"}</td>
+                      <td><Barcode value={record.copyBarcode} height={25} fontSize={9} displayValue={true} /></td>
                       <td>{record.status}</td>
                       <td>{record.borrowDate || "-"}</td>
                       <td>{record.dueDate || "-"}</td>
@@ -185,7 +186,7 @@ export function ReaderRecordsPage({ workspace }) {
                   <tr key={record.recordId}>
                     <td>{record.recordId}</td>
                     <td>{record.bookTitle}</td>
-                    <td>{record.copyBarcode || "-"}</td>
+                    <td><Barcode value={record.copyBarcode} height={25} fontSize={9} displayValue={true} /></td>
                     <td>{record.borrowDate || "-"}</td>
                     <td>{record.dueDate || "-"}</td>
                     <td>{record.returnDate || "-"}</td>

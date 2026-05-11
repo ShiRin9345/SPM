@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { librarianApi } from "../../api/client";
 import { StatCard } from "../../components/StatCard";
+import Barcode from "../../components/Barcode";
 
 export function LibrarianOperationsPage({ workspace }) {
   const permissionsLoaded = Array.isArray(workspace?.permissions);
@@ -18,6 +19,9 @@ export function LibrarianOperationsPage({ workspace }) {
   const [reservations, setReservations] = useState([]);
   const [fines, setFines] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [barcodeInput, setBarcodeInput] = useState("");
+  const [scannedRecord, setScannedRecord] = useState(null);
+  const [scanning, setScanning] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
@@ -63,6 +67,36 @@ export function LibrarianOperationsPage({ workspace }) {
   useEffect(() => {
     loadData();
   }, [workspace?.token, hasOperationsAccess, canProcessReturns, canProcessReservations, canManageFines]);
+
+  async function handleBarcodeLookup() {
+    if (!canProcessReturns) {
+      setError("Current librarian role cannot process returns.");
+      return;
+    }
+    if (!barcodeInput.trim()) {
+      setError("Please enter a barcode.");
+      return;
+    }
+    setScanning(true);
+    setMessage("");
+    setError("");
+    setScannedRecord(null);
+    try {
+      const result = await librarianApi.lookupByBarcode(workspace?.token, barcodeInput.trim());
+      setScannedRecord(result);
+      setMessage("Active borrow record found.");
+    } catch (requestError) {
+      setError(requestError.message || "Failed to lookup barcode");
+    } finally {
+      setScanning(false);
+    }
+  }
+
+  async function handleBarcodeReturn(recordId, approve) {
+    await handleProcessReturn(recordId, approve);
+    setScannedRecord(null);
+    setBarcodeInput("");
+  }
 
   async function handleProcessReturn(recordId, approve) {
     if (!canProcessReturns) {
@@ -133,6 +167,37 @@ export function LibrarianOperationsPage({ workspace }) {
         </div>
       </section>
 
+      {canProcessReturns ? (
+        <section className="page-card">
+          <h3 className="section-title">Return by Barcode</h3>
+          <div className="field-inline">
+            <input
+              placeholder="Scan or enter book copy barcode"
+              value={barcodeInput}
+              onChange={(e) => setBarcodeInput(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter") handleBarcodeLookup(); }}
+            />
+            <button className="primary-button" type="button" onClick={handleBarcodeLookup} disabled={scanning}>
+              {scanning ? "Looking Up..." : "Lookup"}
+            </button>
+          </div>
+          {scannedRecord ? (
+            <div className="feature-banner" style={{ marginTop: "12px" }}>
+              <strong>Record #{scannedRecord.recordId} — {scannedRecord.bookTitle}</strong>
+              <p>Reader: {scannedRecord.readerUsername} | Status: {scannedRecord.status} | Due: {scannedRecord.dueDate || "-"}</p>
+              <div className="inline-actions" style={{ marginBottom: 0 }}>
+                <button className="primary-button" type="button" onClick={() => handleBarcodeReturn(scannedRecord.recordId, true)}>
+                  Approve Return
+                </button>
+                <button className="secondary-button" type="button" onClick={() => handleBarcodeReturn(scannedRecord.recordId, false)}>
+                  Reject Return
+                </button>
+              </div>
+            </div>
+          ) : null}
+        </section>
+      ) : null}
+
       {!hasOperationsAccess ? (
         <section className="page-card">
           <p className="page-note">No operations access.</p>
@@ -185,7 +250,7 @@ export function LibrarianOperationsPage({ workspace }) {
                         <td>{item.recordId}</td>
                         <td>{item.readerUsername}</td>
                         <td>{item.bookTitle}</td>
-                        <td>{item.copyBarcode || "-"}</td>
+                        <td><Barcode value={item.copyBarcode} height={25} fontSize={9} displayValue={true} /></td>
                         <td>{item.status}</td>
                         <td>{item.borrowDate || "-"}</td>
                         <td>{item.dueDate || "-"}</td>
@@ -222,7 +287,7 @@ export function LibrarianOperationsPage({ workspace }) {
                         <td>{item.recordId}</td>
                         <td>{item.readerUsername}</td>
                         <td>{item.bookTitle}</td>
-                        <td>{item.copyBarcode || "-"}</td>
+                        <td><Barcode value={item.copyBarcode} height={25} fontSize={9} displayValue={true} /></td>
                         <td>{item.dueDate || "-"}</td>
                         <td>{item.overdueDays ?? 0}</td>
                         <td>{item.fineAmount ?? 0}</td>
@@ -259,7 +324,7 @@ export function LibrarianOperationsPage({ workspace }) {
                         <td>{item.recordId}</td>
                         <td>{item.readerUsername}</td>
                         <td>{item.bookTitle}</td>
-                        <td>{item.copyBarcode || "-"}</td>
+                        <td><Barcode value={item.copyBarcode} height={25} fontSize={9} displayValue={true} /></td>
                         <td>{item.status}</td>
                         <td>{item.dueDate || "-"}</td>
                         <td>
@@ -348,7 +413,7 @@ export function LibrarianOperationsPage({ workspace }) {
                       <tr key={item.fineId}>
                         <td>{item.fineId}</td>
                         <td>{item.bookTitle || "-"}</td>
-                        <td>{item.copyBarcode || "-"}</td>
+                        <td><Barcode value={item.copyBarcode} height={25} fontSize={9} displayValue={true} /></td>
                         <td>{item.readerUsername}</td>
                         <td>{item.amount}</td>
                         <td>{item.status}</td>

@@ -7,6 +7,8 @@ import com.team.lms.librarian.vo.IsbnLookupVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.net.InetSocketAddress;
+import java.net.ProxySelector;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.net.http.HttpClient;
@@ -21,7 +23,10 @@ public class GoogleBooksIsbnClient {
     private static final String GOOGLE_BOOKS_ENDPOINT = "https://www.googleapis.com/books/v1/volumes?q=isbn:";
 
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private final HttpClient httpClient = HttpClient.newHttpClient();
+    private final HttpClient httpClient = HttpClient.newBuilder()
+            .connectTimeout(java.time.Duration.ofSeconds(15))
+            .proxy(ProxySelector.of(new InetSocketAddress("127.0.0.1", 3067)))
+            .build();
 
     public IsbnLookupVo lookup(String isbn) {
         try {

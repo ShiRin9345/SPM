@@ -39,6 +39,8 @@ create table if not exists books (
 );
 
 alter table books add column barcode varchar(64) unique after isbn;
+alter table books add column thumbnail_url varchar(1024);
+alter table books add column published_date varchar(32);
 
 create table if not exists inventory (
     id bigint primary key auto_increment,
@@ -189,10 +191,11 @@ create table if not exists book_reviews (
     created_at datetime not null,
     updated_at datetime not null,
     deleted boolean not null default false,
-    constraint uq_book_review unique (reader_id, book_id),
     constraint fk_book_review_reader foreign key (reader_id) references users(id),
     constraint fk_book_review_book foreign key (book_id) references books(id)
 );
+
+alter table book_reviews drop index uq_book_review;
 
 create table if not exists book_copies (
     id bigint primary key auto_increment,

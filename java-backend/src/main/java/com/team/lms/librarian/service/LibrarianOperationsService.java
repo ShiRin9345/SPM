@@ -16,6 +16,7 @@ public interface LibrarianOperationsService {
     List<BorrowingRecordManageVo> listCurrentBorrowings(String authorizationHeader);
     List<BorrowingRecordManageVo> listOverdueBorrowings(String authorizationHeader);
     List<ReturnManageVo> listPendingReturns(String authorizationHeader);
+    ReturnManageVo getActiveBorrowByBarcode(String authorizationHeader, String barcode);
     ReturnManageVo processReturn(String authorizationHeader, Long recordId, ReturnProcessRequest request);
 
     List<ReservationManageVo> listReservations(String authorizationHeader);

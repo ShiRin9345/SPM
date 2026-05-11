@@ -1,0 +1,32 @@
+{
+  "createdAt" : "2026-05-11T10:42:02.732865400",
+  "users" : 9,
+  "books" : 4,
+  "borrowRecords" : 9,
+  "pendingReservations" : 1,
+  "configs" : [ {
+    "id" : 1,
+    "createdAt" : "2026-04-12T23:59:21",
+    "updatedAt" : "2026-04-13T10:37:12",
+    "deleted" : false,
+    "configKey" : "BORROW_PERIOD_DAYS",
+    "configValue" : "22",
+    "description" : "Extended borrow period for validation"
+  }, {
+    "id" : 2,
+    "createdAt" : "2026-04-12T23:59:21",
+    "updatedAt" : "2026-04-13T00:03:15",
+    "deleted" : false,
+    "configKey" : "BORROW_LIMIT",
+    "configValue" : "7",
+    "description" : "Maximum borrowed books for testing"
+  }, {
+    "id" : 3,
+    "createdAt" : "2026-04-12T23:59:21",
+    "updatedAt" : "2026-04-13T10:38:33",
+    "deleted" : false,
+    "configKey" : "OVERDUE_FINE_PER_DAY",
+    "configValue" : "2.00",
+    "description" : "Overdue fine charged per day"
+  } ]
+}

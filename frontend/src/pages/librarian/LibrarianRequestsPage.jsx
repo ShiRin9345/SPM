@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { librarianApi } from "../../api/client";
 import { StatCard } from "../../components/StatCard";
+import Barcode from "../../components/Barcode";
 
 export function LibrarianRequestsPage({ workspace }) {
   const permissionsLoaded = Array.isArray(workspace?.permissions);
@@ -131,7 +132,7 @@ export function LibrarianRequestsPage({ workspace }) {
                       <td>{item.requestId}</td>
                       <td>{item.readerUsername}</td>
                       <td>{item.bookTitle}</td>
-                      <td>{item.copyBarcode || "-"}</td>
+                      <td><Barcode value={item.copyBarcode} height={25} fontSize={9} displayValue={true} /></td>
                       <td>{item.status}</td>
                       <td>{item.requestedAt || "-"}</td>
                       <td>{item.remainingCopies ?? 0}</td>

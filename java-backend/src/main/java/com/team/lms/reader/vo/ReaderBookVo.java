@@ -9,6 +9,7 @@ public class ReaderBookVo {
     private Long bookId;
     private String title;
     private String author;
+    private String thumbnailUrl;
     private String categoryName;
     private Integer availableCopies;
     private String shelfStatus;

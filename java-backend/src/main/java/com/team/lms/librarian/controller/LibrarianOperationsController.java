@@ -39,6 +39,14 @@ public class LibrarianOperationsController extends BaseController {
         return success(librarianOperationsService.listOverdueBorrowings(authorizationHeader));
     }
 
+    @GetMapping("/borrow-records/by-barcode")
+    public ApiResponse<ReturnManageVo> getActiveBorrowByBarcode(
+            @RequestHeader("Authorization") String authorizationHeader,
+            @RequestParam("barcode") String barcode
+    ) {
+        return success(librarianOperationsService.getActiveBorrowByBarcode(authorizationHeader, barcode));
+    }
+
     @GetMapping("/return-requests")
     public ApiResponse<List<ReturnManageVo>> listPendingReturns(
             @RequestHeader("Authorization") String authorizationHeader

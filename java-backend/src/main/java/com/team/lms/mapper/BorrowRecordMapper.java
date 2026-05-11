@@ -9,6 +9,7 @@ public interface BorrowRecordMapper {
     List<BorrowRecord> selectByReaderId(Long readerId);
     BorrowRecord selectById(Long id);
     BorrowRecord selectByBorrowRequestId(Long borrowRequestId);
+    BorrowRecord selectActiveByBookCopyBarcode(@Param("barcode") String barcode);
     void insert(BorrowRecord record);
     void update(BorrowRecord record);
     List<BorrowRecord> selectReturnPendingRecords();

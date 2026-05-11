@@ -14,6 +14,8 @@ public class Book extends BaseEntity {
     private String barcode;
     private String publisher;
     private String description;
+    private String thumbnailUrl;
+    private String publishedDate;
     private Category category;
     private ShelfStatus shelfStatus;
 }

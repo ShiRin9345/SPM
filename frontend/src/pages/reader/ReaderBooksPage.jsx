@@ -171,6 +171,7 @@ export function ReaderBooksPage({ workspace }) {
               <table>
                 <thead>
                   <tr>
+                    <th>Cover</th>
                     <th>ID</th>
                     <th>Title</th>
                     <th>Author</th>
@@ -184,6 +185,13 @@ export function ReaderBooksPage({ workspace }) {
                 <tbody>
                   {visibleBooks.map((book) => (
                     <tr key={book.bookId}>
+                      <td>
+                        {book.thumbnailUrl ? (
+                          <img src={book.thumbnailUrl} alt={book.title} className="cover-thumb-table" />
+                        ) : (
+                          <span className="cover-placeholder">-</span>
+                        )}
+                      </td>
                       <td>{book.bookId}</td>
                       <td>{book.title}</td>
                       <td>{book.author}</td>
@@ -220,7 +228,7 @@ export function ReaderBooksPage({ workspace }) {
                   ))}
                   {!loading && visibleBooks.length === 0 ? (
                     <tr>
-                      <td colSpan="8">No books found</td>
+                      <td colSpan="9">No books found</td>
                     </tr>
                   ) : null}
                 </tbody>

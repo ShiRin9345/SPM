@@ -122,6 +122,8 @@ public class ReaderBookServiceImpl implements ReaderBookService {
                 .isbn(book.getIsbn())
                 .publisher(book.getPublisher())
                 .description(book.getDescription())
+                .thumbnailUrl(book.getThumbnailUrl())
+                .publishedDate(book.getPublishedDate())
                 .categoryName(book.getCategory() == null ? null : book.getCategory().getName())
                 .totalCopies(totalCopies)
                 .availableCopies(availableCopies)
@@ -222,21 +224,14 @@ public class ReaderBookServiceImpl implements ReaderBookService {
             throw new BusinessException(400, "only readers who have borrowed this book can review it");
         }
 
-        BookReview review = bookReviewMapper.selectByReaderAndBookId(reader.getId(), bookId);
-        if (review == null) {
-            review = new BookReview();
-            review.setReader(reader);
-            review.setBook(book);
-            review.setRatingScore(request.getRatingScore());
-            review.setReviewContent(request.getReviewContent().trim());
-            bookReviewMapper.insert(review);
-            review = bookReviewMapper.selectByReaderAndBookId(reader.getId(), bookId);
-        } else {
-            review.setRatingScore(request.getRatingScore());
-            review.setReviewContent(request.getReviewContent().trim());
-            bookReviewMapper.update(review);
-            review = bookReviewMapper.selectByReaderAndBookId(reader.getId(), bookId);
-        }
+        BookReview review = new BookReview();
+        review.setReader(reader);
+        review.setBook(book);
+        review.setRatingScore(request.getRatingScore());
+        review.setReviewContent(request.getReviewContent().trim());
+        review.setCreatedAt(java.time.LocalDateTime.now());
+        review.setUpdatedAt(java.time.LocalDateTime.now());
+        bookReviewMapper.insert(review);
         return toReviewVo(review, reader.getId());
     }
 
@@ -385,6 +380,7 @@ public class ReaderBookServiceImpl implements ReaderBookService {
                     .title(book.getTitle())
                     .author(book.getAuthor())
                     .categoryName(book.getCategory() == null ? null : book.getCategory().getName())
+                    .thumbnailUrl(book.getThumbnailUrl())
                     .availableCopies(inventory == null ? 0 : inventory.getAvailableCopies())
                     .shelfStatus(book.getShelfStatus() == null ? null : book.getShelfStatus().name())
                     .favorite(Boolean.TRUE.equals(favoriteBookIds.get(book.getId())))
